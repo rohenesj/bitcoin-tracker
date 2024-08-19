@@ -6,6 +6,6 @@ COPY . /app
 
 RUN pip install flask boto3
 
-EXPOSE 5000
+EXPOSE 80
 
 CMD python server/server.py
