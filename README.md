@@ -392,6 +392,7 @@ jobs:
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
 ```
+![Resultados de Actions](images/actionsResult.png)
 
 #### 1. Checkout
 En este paso, GitHub utiliza la funcion de git para obtener la versión mas nueva de la rama
