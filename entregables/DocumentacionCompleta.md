@@ -51,7 +51,7 @@ Teniendo en cuenta la estructura de los datos extraídos, la mejor solución par
 
 Considerando los requisitos y las soluciones propuestas, desde una Lambda se debe hacer la llamada a la API, simplificar el resultado y guardarlo en DynamoDB. Para poder interactuar con DynamoDB, primero se debe crear una tabla y utilizar el SDK de Amazon AWS, en este caso, para Python ```boto3```.
 
-![Creación del DynamoDB](images/createDynamoDB.png)
+![Creación del DynamoDB](../images/createDynamoDB.png)
 
 Para crear la tabla en DynamoDB, se necesita un nombre y una "Partition Key". Considerando que el identificador más evidente de los datos sería el momento en que se tomaron, se utilizó como "Partition Key" la marca de tiempo de la llamada a la API. Esto es crucial, ya que este es el dato que diferencia una entrada de otra.
 
@@ -85,7 +85,7 @@ zip -r requests.zip python/ # Comprimir los contenidos de la carpeta
 ```
 Al crear la función Lambda, ahora se debe modificar el rol asociado a la función para agregar políticas que permitan a la función Lambda leer y escribir en la tabla de DynamoDB.
 
-![Agregando permisos a la funcion lambda](images/lambdaPermissions.png)
+![Agregando permisos a la funcion lambda](../images/lambdaPermissions.png)
 
 La función Lambda tiene un código similar a los ejemplos previamente presentados; sin embargo, ahora esta lógica debe estar dentro de un lambda_handler, que es una función que responde a un evento dentro de un contexto. Para el objetivo de esta función, estos parámetros son irrelevantes. Los datos obtenidos de la llamada a la API no incluyen un elemento de "timestamp", que es la clave primaria, por lo tanto, dentro de la función Lambda, se obtiene el tiempo actual en formato UNIX, y se agrega al inicio del JSON. El "timestamp" debe estar al principio del JSON; de lo contrario, DynamoDB no reconocerá el elemento como una "Partition Key". Además, se eliminan algunos elementos que se repiten a lo largo de los diferentes datos, como los "tags", para ahorrar espacio en DynamoDB. Una vez que el JSON ha sido procesado, se guarda en DynamoDB utilizando boto3. Adicionalmente se guardaron variables como la API key dentro de la variables de entorno de Lambda, donde el valor es cifrado.
 
@@ -131,7 +131,7 @@ def lambda_handler(event, context):
 ```
 Cada vez que la función Lambda es activada, realiza un llamado a la API de CoinMarketCap, limpia los datos y los guarda en la base de datos DynamoDB. Para que esta función se active periódicamente (cada 6 horas), se debe utilizar un servicio de Amazon llamado EventBridge. Con EventBridge, se pueden programar funciones o servicios de AWS, como Lambda, basándose en un evento o un patrón. En este caso, el patrón es la ejecución cada 6 horas.
 
-![Diagrama de flujo de Lambda](images/lambdaDiagram.png)
+![Diagrama de flujo de Lambda](../images/lambdaDiagram.png)
 
 ## Diseño de la Pagina Web
 
@@ -208,7 +208,7 @@ const filteredData = dataSort.map(item => ({
 
 Utilizando Bootstrap y HTML, logramos llegar al diseño final de la pagina
 
-![Pagina Web](images/webpageSH.png)
+![Pagina Web](../images/webpageSH.png)
 
 ## Despliegue de la Página Web
 
@@ -241,7 +241,7 @@ Ahora se ha construido un contenedor que al su ejecuccion automaticamente se eje
 
 Para completar el despliegue con la infraestructura deseada, primero se debe crear un repositorio en Amazon ECR. Amazon ECR es un servicio de AWS donde los usuarios pueden subir imágenes de sus contenedores, ya sea de forma pública o privada. Una vez que la imagen está en ECR, el siguiente paso es crear un clúster en Amazon ECS utilizando la imagen del ECR.
 
-![Pagina Web](images/createECR.png)
+![Pagina Web](../images/createECR.png)
 
 Ahora, teniendo en cuenta que próximamente se utilizarán GitHub Actions para desplegar los servicios de forma automática, es crítico configurar un nuevo usuario IAM que tenga permisos para modificar el repositorio. Este usuario se puede configurar en el escritorio del desarrollador y, además, se puede configurar en un "Runner" en GitHub Actions.
 
@@ -410,8 +410,3 @@ Utilizando la "Task Definition" dentro del repositorio, esta acción actualiza e
 
 #### 6. Deploy Amazon ECS task definition
 Utilizando la "Task Definition" actualizada, se despliega el nuevo servicio dentro de los clústeres de ECS.
-
-
-
-
-
